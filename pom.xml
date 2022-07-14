@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>swagger2java</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <url>https://www.thecodejournal.tech/2021/02/generating-code-using-maven-swagger-to-java/</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEnconding>UTF-8</project.reporting.outputEnconding>
+        <java.version>11</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+    </properties>
+
+    <!-- Once the classes are generated the project will NOT compile unless we add the following dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.12.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+    </dependencies>
+
+    <!-- The plugin automatically attaches to the generate-sources lifecycle phase, and the goal to execute is generate. -->
+    <!--
+        - inputSpec - Location of the Open API specification file(json or yaml)
+        - language - Programming Language in which the code should be generated. The full list can be looked up here.
+        - library - Libraries used to generate the classes. For Java, options are jersey1, jersey2, feign, okhttp-gson(default), retrofit, retrofit2, google-api-client, rest-assured, resttemplate. Since, a lot of applications use Spring Boot, it makes sense to use the Spring Web Rest Template, and that is what we configured.
+        - apiPackage - Package where classes for the API alone are generated
+        - modelPackage - Package where request, response classes(model classes) are generated
+        - invokerPackage - Package where classes that should be used to make the calls to the API and get parsed resposne
+        - generateApiTests - Generation of API test classes
+        - generateApiDocumentation - Generate API documentation files
+        - generateModelTests - Generate Model test classes
+        - generateModelDocumentation - Generate Model documentation files
+        - generateSupportingFiles - Generate supporting files(invoker client classes) and other files (like pom.xml, gradle.properties, build.sbt)
+        - interfaceOnly - This ensures that we are only generating the interface classes for API client and we don’t need the server classes.
+        - dateLibrary - Date library to use. By default, joda is used, but you can set the value as java8 to use Java 8’s new Date-Time classes
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.swagger.codegen.v3</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>3.0.25</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/petstore.json</inputSpec>
+                            <language>java</language>
+                            <library>resttemplate</library>
+                            <apiPackage>org.example.swagger2java.api</apiPackage>
+                            <modelPackage>org.example.swagger2java.model</modelPackage>
+                            <invokerPackage>org.example.swagger2java.handler</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
